@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #ffe6e6;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+    .puzzle-container {
+    display: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(80px, 100px));
+    grid-template-rows: repeat(3, minmax(80px, 100px));
+    gap: 4px;
+    margin-top: 20px;
+    padding: 10px;
+    border: 0px 0px 12px rgba(255, 77, 77, 0.8);
+    border-radius: 12px;
+    background-color: #f8f8f8;
+    box-shadow: 0px 4px 15px rgba(255, 77, 77, 0.6);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Puzzle Pieces */
+.puzzle-piece {
+    width: 100px;
+    height: 100px;
+    background-size: 300px 300px;
+    background-position: center;
+    cursor: grab;
+    border: 2px solid #fff;
+    border-radius: 6px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* When dragging the piece */
+.puzzle-piece:active {
+    cursor: grabbing;
+    transform: scale(1.05);
+    box-shadow: 0px 4px 15px rgba(255, 77, 77, 0.6);
+}
+
+/* Hover effect */
+.puzzle-piece:hover {
+    transform: scale(1.08);
+    box-shadow: 0px 4px 15px rgba(255, 77, 77, 0.6);
+}
+
+/* Glowing effect */
+@keyframes puzzle-glow {
+    0% { box-shadow: 0 0 5px rgba(255, 0, 100, 0.5); }
+    50% { box-shadow: 0 0 15px rgba(255, 0, 100, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(255, 0, 100, 0.5); }
+}
+
+.puzzle-container.glow {
+    animation: puzzle-glow 1.5s infinite alternate;
+}
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            opacity: 0.7;
+            border-radius: 50%;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            from { transform: translateY(-10vh) translateX(0); }
+            to { transform: translateY(100vh) translateX(20vw); }
+        }
+        .valentine-question {
+            display: none;
+            margin-top: 20px;
+        }
+        .buttons {
+            margin-top: 10px;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        #noBtn {
+            position: relative;
+        }
+        /* Verification Popup */
+        /* Popup Styling */
+/* Popup Styling */
+.popup {
+    position: fixed;
+    top: 30%;
+    
+    background: #faf7f9; /* Dark theme for a neon effect */
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(255, 77, 77, 0.6); /* Outer glow */
+    z-index: 1000;
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-in-out forwards;
+    border: 2px solid #ff4d4d;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Input Styling */
+.popup input {
+    padding: 12px;
+    margin-top: 12px;
+    width: 85%;
+    border: 2px solid #ff4d4d;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 16px;
+    background: #ffe6f2;
+    color: #eb1478;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+/* Glowing Input Focus Effect */
+.popup input:focus {
+    outline: none;
+    border-color: #ff1a1a;
+    box-shadow: 0px 0px 12px rgba(255, 77, 77, 0.8); /* Neon glow */
+}
+
+/* Button Styling */
+.popup button {
+    margin-top: 12px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #ff4d4d, #ff1a1a);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+    box-shadow: 0px 0px 12px rgba(255, 77, 77, 0.6); /* Initial glow */
+}
+
+/* Button Hover Effect */
+.popup button:hover {
+    background: linear-gradient(135deg, #d43f3f, #b30000);
+    transform: scale(1.05);
+    box-shadow: 0px 0px 20px rgba(255, 77, 77, 1); /* Stronger glow on hover */
+}
+
+/* Button Active (Click) Effect */
+.popup button:active {
+    transform: scale(0.98);
+    box-shadow: 0px 0px 15px rgba(255, 77, 77, 0.7);
+}
+p{
+    text-shadow :  0px 0px 12px rgba(255, 77, 77, 0.6);
+    font-size: 18px;
+    color :#f6093b;
+}
+/* Glowing Animation */
+@keyframes neonGlow {
+    0% {
+        box-shadow: 0px 0px 10px rgba(255, 77, 77, 0.6);
+    }
+    50% {
+        box-shadow: 0px 0px 20px rgba(255, 77, 77, 1);
+    }
+    100% {
+        box-shadow: 0px 0px 10px rgba(255, 77, 77, 0.6);
+    }
+}
+
+/* Apply Neon Glow to Button */
+.popup button {
+    animation: neonGlow 1.5s infinite alternate;
+}
+
+
+        .hidden {
+            display: none;
+        }
+        #puzzleContainer {
+            display: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -55%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+        h1{
+            display : none;
+            font-family : cursive;
+            color: #eb1476;
+
+        }
+        .valentine-question {
+        display: none;
+        opacity: 0;
+        transform: scale(0.9);
+        animation: fadeIn 1.5s ease-in-out forwards;
+        text-align: center;
+        padding: 20px;
+        border-radius: 15px;
+        background-color: #ffe6f2;
+        box-shadow: 0 0 15px rgba(255, 0, 100, 0.3);
+        position: relative;
+       
+    }
+
+    /* Fade-in effect */
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Pulsating glow effect */
+    .valentine-question h2 {
+        font-size: 26px;
+        color: #d63384;
+        text-shadow: 0 0 10px rgba(255, 0, 100, 0.5);
+        animation: glow 1.5s infinite alternate;
+    }
+
+    @keyframes glow {
+        from {
+            text-shadow: 0 0 10px rgba(255, 0, 100, 0.5);
+        }
+        to {
+            text-shadow: 0 0 20px rgba(255, 0, 150, 0.7);
+        }
+    }
+
+    /* YES Button - glowing effect */
+    .buttons button {
+        font-size: 18px;
+        padding: 12px 20px;
+        margin: 10px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .buttons button:first-child {
+        background-color: #ff4081;
+        color: white;
+        box-shadow: 0 0 10px rgba(255, 0, 100, 0.5);
+    }
+
+    .buttons button:first-child:hover {
+        background-color: #ff1a66;
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(255, 0, 100, 0.8);
+    }
+
+    /* NO Button - wiggling & teleport effect */
+    #noBtn {
+        background-color: #ffc1cc;
+        color: black;
+        position: absolute;
+        transition: all 0.2s ease-in-out;
+        z-index: 10;
+    }
+
+    @keyframes wiggle {
+        0% { transform: rotate(0); }
+        25% { transform: rotate(-5deg); }
+        50% { transform: rotate(5deg); }
+        75% { transform: rotate(-5deg); }
+        100% { transform: rotate(0); }
+    }
+
+    #noBtn:hover {
+        animation: wiggle 0.3s ease-in-out;
+    }
+
+    /* Floating hearts animation */
+    .heart {
+        position: absolute;
+        color: red;
+        font-size: 24px;
+        animation: floatUp 3s linear infinite;
+        z-index: 1; /* Lower z-index so hearts stay behind */
+}
+
+#puzzleContainer {
+    position: relative;
+    z-index: 10; /* Higher z-index to stay on top */
+    background-color: white; /* Optional: Ensures content is visible */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 12px rgba(255, 77, 77, 0.8);
+}
+#valentineQuestion{
+    z-index :10;
+}
+    
+
+    @keyframes floatUp {
+        from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateY(-150px);
+            opacity: 0;
+        }
+    }
+    .hidden {
+    display: none;
+}
+
+#thankYouPopup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(255, 0, 0, 0.5);
+    text-align: center;
+    z-index : 10;
+}
+#thankYouPopup img {
+    width: 150px; /* Adjust size */
+    margin-top: 10px;
+    
+}
+
+
+
+@keyframes glow {
+    from {
+        box-shadow: 0px 0px 5px rgba(255, 0, 0, 0.5);
+    }
+    to {
+        box-shadow: 0px 0px 15px rgba(255, 0, 0, 1);
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- Verification Popup -->
+    <div id="verificationPopup" class="popup">
+        <p>Verificationnn. If you are my khyathii babii answerrr thiss 💖</p><br>
+        <p>What's the answer for "I lovee youu babii":</p>
+        <input type="text" id="verificationInput" />
+        <button onclick="checkVerification()">Submit</button>
+    </div>
+
+
+    <h1 id = "h">Helloo babbiii!!!<br>Solvee this puzzlee forr a surpriseee!!</h1>
+    <div class="puzzle-container" id="puzzleContainer"></div>
+   
+  <div class="valentine-question" id="valentineQuestion">
+    <h2>Will you be my Valentine?🥺 💕</h2>
+    <div class="buttons">
+        <button onclick="showThankYou()">Yes</button>
+        <button id="noBtn" onmouseover="moveNoButton()">No</button>
+    </div>
+</div>
+
+<div id="thankYouPopup" class="hidden">
+    <p class="message">OMG!!!! Thank you, babbiii! 🥺💍💖</p>
+    <p class="subtext">(Acting like I didn’t make it impossible to click the "No" button 😉)</p>
+    
+    <p class="ring-text">Anywayyy!! Here’s your ringgg forr uuu 😘</p>
+    <img id="ringImage" src="D:/Codes/kk/rings.png" alt="Ring Box">
+
+    <p class="joke">Babee!! Are you <strong>http?</strong></p>
+    <p class="joke">Bcz without you, I’m just <strong>://</strong></p>
+
+    <p class="wink">😉😉</p>
+</div>
+
+
+    
+    <script>
+        let draggedPiece = null;
+        let positions = [];
+
+        function createPuzzle() {
+            const container = document.getElementById("puzzleContainer");
+            const imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUvaM6Hq7JWZtll_2kjR4ueNR_sjiDltvdOg&s"; // Replace with your image URL
+            let pieces = [];
+
+            for (let i = 0; i < 9; i++) {
+                let piece = document.createElement("div");
+                piece.classList.add("puzzle-piece");
+                piece.style.backgroundImage = `url('${imageUrl}')`;
+                piece.style.backgroundPosition = `-${(i % 3) * 100}px -${Math.floor(i / 3) * 100}px`;
+                piece.draggable = true;
+                piece.dataset.index = i;
+
+                piece.addEventListener("dragstart", dragStart);
+                piece.addEventListener("dragover", dragOver);
+                piece.addEventListener("drop", drop);
+
+                pieces.push(piece);
+            }
+
+            pieces.sort(() => Math.random() - 0.5);
+            pieces.forEach(piece => container.appendChild(piece));
+            positions = pieces.map(p => p.dataset.index);
+        }
+
+        function dragStart(event) {
+            draggedPiece = event.target;
+        }
+
+        function dragOver(event) {
+            event.preventDefault();
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            let target = event.target;
+
+            if (target.classList.contains("puzzle-piece")) {
+                let draggedIndex = draggedPiece.dataset.index;
+                let targetIndex = target.dataset.index;
+
+                let draggedPos = positions.indexOf(draggedIndex);
+                let targetPos = positions.indexOf(targetIndex);
+                [positions[draggedPos], positions[targetPos]] = [positions[targetPos], positions[draggedPos]];
+
+                let tempBg = draggedPiece.style.backgroundPosition;
+                draggedPiece.style.backgroundPosition = target.style.backgroundPosition;
+                target.style.backgroundPosition = tempBg;
+
+                draggedPiece.dataset.index = targetIndex;
+                target.dataset.index = draggedIndex;
+
+                checkPuzzleCompletion();
+            }
+        }
+
+        function checkPuzzleCompletion() {
+            if (positions.every((pos, index) => pos == index)) {
+                createConfetti();  // Start confetti immediately
+
+                setTimeout(() => {
+                    document.getElementById("puzzleContainer").style.opacity = "0"; // Fade out effect
+                    setTimeout(() => {
+                        document.getElementById("puzzleContainer").style.display = "none";
+                        document.getElementById("valentineQuestion").style.display = "block";
+                        document.getElementById("h").style.display = "none";
+                    }, 1000);
+                }, 3000); // Puzzle stays for 3 sec before hiding
+            }
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                let confetti = document.createElement("div");
+                confetti.classList.add("confetti");
+                confetti.style.left = Math.random() * 100 + "vw";
+                confetti.style.animationDuration = Math.random() * 3 + 1 + "s";
+                confetti.style.backgroundColor = ["red", "pink", "white"][Math.floor(Math.random() * 3)];
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+        
+function moveNoButton() {
+            let noButton = document.getElementById("noBtn");
+
+            noButton.addEventListener("mouseover", function() {
+                let maxX = window.innerWidth - 500; // Max width limit
+                let maxY = window.innerHeight - 500; // Max height limit
+
+                let randomX = Math.random() * maxX; // Random X position
+                let randomY = Math.random() * maxY; // Random Y position
+
+                let randomScale = Math.random() * (1.8 - 0.6) + 0.6; // Random size (0.6x - 1.8x)
+
+                noButton.style.position = "absolute"; // Allow free movement
+                noButton.style.left = `${randomX}px`;
+                noButton.style.top = `${randomY}px`;
+                noButton.style.transform = `scale(${randomScale})`; // Change size
+            });
+        }
+
+
+    function showThankYou() {
+        document.getElementById("valentineQuestion").style.display = "none";
+        document.getElementById("thankYouPopup").style.display = "block";
+    }
+    
+
+ function createHearts() {
+    for (let i = 0; i < 20; i++) {
+        let heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerHTML = "❤️";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.top = Math.random() * 100 + "vh";
+        heart.style.animationDuration = Math.random() * 2 + 2 + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 3000);
+    }
+       heartTimeout = setTimeout(() => {
+        stopFloatingHearts();
+    }, 30000);
+}
+
+// Start the heart effect
+let heartInterval = setInterval(createHearts, 1000);
+
+// Stop the hearts after 10 seconds
+
+
+
+function checkVerification() {
+    let input = document.getElementById("verificationInput").value.trim().toLowerCase();
+    let verificationPopup = document.getElementById("verificationPopup");
+
+    // Regex pattern allowing repeated letters but keeping correct words in order
+    let pattern = /^i+\s*l+o+v+e+\s*y+o+u+\s*(t+o+o+)?\s*b+a+b+(y+|i+)+$/;
+
+    if (pattern.test(input)) {
+        verificationPopup.style.display = "none"; // Hide verification box
+        document.getElementById("puzzleContainer").style.display = "grid"; // Show puzzle
+        document.getElementById("h").style.display = "block";
+        alert("Yayyy!! i knewww uu secretlyy lovedd mee 😉 💖");
+    } else {
+        alert("Oopssss! If i sayy babyy u sayy babyy tooo");
+    }
+}
+function hide(){
+    document.getElementById("valentineQuestion").style.display = "none";
+}
+        document.addEventListener("DOMContentLoaded", createPuzzle);
+    </script>
+
+</body>
+</html>
